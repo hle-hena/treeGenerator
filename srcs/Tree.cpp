@@ -6,7 +6,7 @@
 /*   By: hle-hena <hle-hena@student.42perpignan.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 14:50:37 by hle-hena          #+#    #+#             */
-/*   Updated: 2025/09/05 13:00:21 by hle-hena         ###   ########.fr       */
+/*   Updated: 2025/09/05 17:54:01 by hle-hena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,24 @@ Tree::Tree(Grid &grid, Vec2 &root) :
 	_grid(grid),
 	_root(root),
 	_initialLen(15),
-	_numOfLayers(10),
+	_numOfLayers(9),
 	_branchChar("~;:=")
 {
 }
 
+Tree::Tree(Grid &grid, Vec2 &root, int initialLen, int numOfLayers) :
+	_grid(grid),
+	_root(root),
+	_initialLen(initialLen),
+	_numOfLayers(numOfLayers),
+	_branchChar("~;:=")
+{
+}
 Tree::Tree(const Tree &other) :
 	_grid(other._grid),
 	_root(other._root),
 	_initialLen(15),
-	_numOfLayers(10),
+	_numOfLayers(9),
 	_branchChar(other._branchChar)
 {
 }
@@ -62,32 +70,42 @@ Vec2	Tree::getEndCoo(Vec2 start, float len, float theta) const
 
 void	Tree::draw(void) const
 {
-	float	initialTheta = randNormal(0, 0.1f);
+	float	initialTheta = randNormal(0, 0.2f);
 
-	drawBox("_____~");
+	drawBox("_____~", static_cast<double>(_initialLen) / 5.0);
 	drawBranch(_root, 1, _initialLen,
-		3, initialTheta);
+		static_cast<double>(_initialLen) / 5.0,
+		initialTheta);
 }
 
-void	Tree::drawBox(const std::string soilSet) const
+void	Tree::drawBox(const std::string soilSet, float width) const
 {
 	Vec2	pos(_root);
-	int		boxWidth = std::max<int>(21, _grid.width * 0.5);
-	int		endBox = pos.x + boxWidth / 2;
 	char	toPrint;
 
-	boxWidth += boxWidth % 2;
-	pos.x -= boxWidth / 2;
-	while (pos.x < endBox)
+	while (width > 1)
 	{
-		if (fabs(pos.x - _root.x + 2) < 0.2)
-			toPrint = '/';
-		else if (fabs(pos.x - _root.x - 2) < 0.2)
-			toPrint = '\\';
-		else
-			toPrint = soilSet[randIntRange(0, soilSet.size() - 1)];
-		_grid.placeChar(pos, toPrint, false);
-		pos.x += 1;
+		int		boxWidth = std::max<int>(21, _grid.width * 0.5);
+		int		endBox = pos.x + boxWidth / 2;
+
+		boxWidth += boxWidth % 2;
+		pos.x -= boxWidth / 2;
+		while (pos.x < endBox)
+		{
+			if (fabs(pos.x - _root.x) < width && pos.x < _root.x)
+				toPrint = '/';
+			else if (fabs(pos.x - _root.x) < width)
+				toPrint = '\\';
+			else if (pos.y == _root.y)
+				toPrint = soilSet[randIntRange(0, soilSet.size() - 1)];
+			else
+				toPrint = ' ';
+			_grid.placeChar(pos, toPrint, false);
+			pos.x += 1;
+		}
+		pos.y += 1;
+		pos.x = _root.x;
+		width *= randFloatRange(0.75, 0.9);
 	}
 }
 
@@ -104,15 +122,10 @@ void	Tree::drawBranch(Vec2 startCoo, int layer, float len, float width,
 	Vec2	normal(0, 0);
 
 	endCoo = getEndCoo(startCoo, len, theta);
-	_grid.drawLine(startCoo, endCoo, _branchChar);
-	if (layer == 1)
-	{
-		startCoo.x += 1;
-		_grid.drawLine(startCoo, endCoo, _branchChar);
-		startCoo.x -= 2;
-		_grid.drawLine(startCoo, endCoo, _branchChar);
-		startCoo.x += 1;
-	}
+	normal.x = -(endCoo.y - startCoo.y);
+	normal.y = endCoo.x - startCoo.x;
+	normal.normalize();
+	_grid.drawLine(startCoo, endCoo, normal, width, _branchChar);
 	drawBranchChild(startCoo, layer, len, width, theta);
 }
 
@@ -120,9 +133,9 @@ void	Tree::drawBranchChild(Vec2 startCoo, int layer, float len, float width,
 	float theta) const
 {
 	int		sign = (0.5 - randIntRange(0, 1)) * 2;
-	int		nbBranch = round(randNormal(2.5, 0.5));
+	int		nbBranch = round(randNormal(2.6, 1));
 	float	step = nbBranch == 0 ? 0 : len / (float)nbBranch;
-	float	newWidth = width == 1 ? width : width - 1;
+	float	newWidth = width * 0.75;
 	float	newLen = len * 0.75;
 	float	newTheta;
 
@@ -130,10 +143,10 @@ void	Tree::drawBranchChild(Vec2 startCoo, int layer, float len, float width,
 	{
 		do
 			newTheta = theta +
-				static_cast<float>(sign) * randNormal(0.498132, randFloatRange(0.15, 0.3));
+				static_cast<float>(sign) * randNormal(0.498132, randFloatRange(0.15, 0.2));
 		while (fabs(newTheta) > 2 || fabs(newTheta) < 0.3);
 		drawBranch(getEndCoo(startCoo, (i + 1) * step, theta),
-			layer + 1, newLen, newWidth * (newTheta / 3), newTheta);
+			layer + 1, newLen, newWidth, newTheta);
 		sign *= -1;
 	}
 }

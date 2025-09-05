@@ -6,7 +6,7 @@
 /*   By: hle-hena <hle-hena@student.42perpignan.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 10:39:57 by hle-hena          #+#    #+#             */
-/*   Updated: 2025/09/05 12:07:12 by hle-hena         ###   ########.fr       */
+/*   Updated: 2025/09/05 17:29:37 by hle-hena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class	Tree
 			float width, float theta) const;
 		void	drawBranchChild(Vec2 startCoo, int layer, float len,
 			float width, float theta) const;
-		void	drawBox(const std::string soilSet) const;
+		void	drawBox(const std::string soilSet, float width) const;
 
 		Grid				&_grid;
 		Vec2				&_root;
@@ -37,6 +37,7 @@ class	Tree
 
 	public:
 		Tree(Grid &grid, Vec2 &root);
+		Tree(Grid &grid, Vec2 &root, int initialLen, int numOfLayers);
 		Tree(const Tree &other);
 		Tree &operator=(const Tree &other);
 		~Tree(void);
