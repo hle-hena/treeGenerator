@@ -6,7 +6,7 @@
 /*   By: hle-hena <hle-hena@student.42perpignan.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 12:00:04 by hle-hena          #+#    #+#             */
-/*   Updated: 2025/09/05 17:15:22 by hle-hena         ###   ########.fr       */
+/*   Updated: 2025/09/08 13:54:54 by hle-hena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ class	Grid
 {
 	private:
 		void	drawLow(Vec2 start, Vec2 end, Vec2 &normal, float width,
-			const std::string &charSet, char branch);
+			const std::string &charSet, char branch, bool endSwitch);
 		void	drawHigh(Vec2 start, Vec2 end, Vec2 &normal, float width,
-			const std::string &charSet, char branch);
+			const std::string &charSet, char branch, bool endSwitch);
 
 		std::string	*_grid;
 

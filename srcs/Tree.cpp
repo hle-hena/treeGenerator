@@ -6,7 +6,7 @@
 /*   By: hle-hena <hle-hena@student.42perpignan.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 14:50:37 by hle-hena          #+#    #+#             */
-/*   Updated: 2025/09/08 13:41:51 by hle-hena         ###   ########.fr       */
+/*   Updated: 2025/09/08 14:10:38 by hle-hena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,11 @@ void	Tree::drawBox(const std::string soilSet, float width) const
 {
 	Vec2	pos(_root);
 	char	toPrint;
+	float	width_left = width;
+	float	width_right = width;
 	float	dif;
 
-	while (width > 1)
+	while (width_left > 1 && width_right > 1)
 	{
 		int		boxWidth = std::max<int>(21, _grid.width * 0.5);
 		int		endBox = pos.x + boxWidth / 2;
@@ -94,11 +96,9 @@ void	Tree::drawBox(const std::string soilSet, float width) const
 		while (pos.x < endBox)
 		{
 			dif = fabs(pos.x - _root.x);
-			if (dif < width && dif > width / 10 && pos.x < _root.x)
-				toPrint = '/';
-			else if (dif < width && dif > width / 10)
-				toPrint = '\\';
-			else if (dif < width)
+			if (dif < width_left && pos.x < _root.x)
+				toPrint = '|';
+			else if (dif < width_right && pos.x > _root.x)
 				toPrint = '|';
 			else if (pos.y == _root.y)
 				toPrint = soilSet[randIntRange(0, soilSet.size() - 1)];
@@ -109,7 +109,8 @@ void	Tree::drawBox(const std::string soilSet, float width) const
 		}
 		pos.y += 1;
 		pos.x = _root.x;
-		width *= randFloatRange(0.75, 0.9);
+		width_left *= randFloatRange(0.75, 0.9);
+		width_right *= randFloatRange(0.75, 0.9);
 	}
 }
 

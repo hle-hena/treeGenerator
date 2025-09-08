@@ -6,7 +6,7 @@
 /*   By: hle-hena <hle-hena@student.42perpignan.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 12:32:24 by hle-hena          #+#    #+#             */
-/*   Updated: 2025/09/08 13:38:55 by hle-hena         ###   ########.fr       */
+/*   Updated: 2025/09/08 13:59:34 by hle-hena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,21 +123,21 @@ void	Grid::placeWideChar(Vec2 &pos, Vec2 &normal, float width,
 	if (fabs(end.y - start.y) < fabs(end.x - start.x))
 	{
 		if (start.x > end.x)
-			drawLow(end, start, normal, -1, charSet, branch);
+			drawLow(end, start, normal, -1, charSet, branch, false);
 		else
-			drawLow(start, end, normal, -1, charSet, branch);
+			drawLow(start, end, normal, -1, charSet, branch, false);
 	}
 	else
 	{
 		if (start.y > end.y)
-			drawHigh(end, start, normal, -1, charSet, branch);
+			drawHigh(end, start, normal, -1, charSet, branch, false);
 		else
-			drawHigh(start, end, normal, -1, charSet, branch);
+			drawHigh(start, end, normal, -1, charSet, branch, false);
 	}
 }
 
 void	Grid::drawLow(Vec2 start, Vec2 end, Vec2 &normal, float width,
-	const std::string &charSet, char branch)
+	const std::string &charSet, char branch, bool endSwitch)
 {
 	Vec2	pos(0, 0);
 	int		dx = end.x - start.x;
@@ -145,6 +145,7 @@ void	Grid::drawLow(Vec2 start, Vec2 end, Vec2 &normal, float width,
 	int		yi = dy < 0 ? -1 : 1;
 	int		error;
 	int		y;
+	float	charWidth;
 
 	dy = abs(dy);
 	error = (2 * dy) - dx;
@@ -156,10 +157,13 @@ void	Grid::drawLow(Vec2 start, Vec2 end, Vec2 &normal, float width,
 	{
 		pos.x = x;
 		pos.y = y;
-		placeWideChar(pos, normal,
-			lerp(width, width * 0.75,
-				static_cast<float>(x - start.x) / static_cast<float>(end.x - start.x)),
-			charSet, branch);
+		if (endSwitch)
+			charWidth = lerp(width, width * 0.75, static_cast<float>(x - end.x)
+					/ static_cast<float>(start.x - end.x));
+		else
+			charWidth = lerp(width, width * 0.75, static_cast<float>(x - start.x)
+					/ static_cast<float>(end.x - start.x));
+		placeWideChar(pos, normal, charWidth, charSet, branch);
 		if (error > 0)
 		{
 			y += yi;
@@ -171,7 +175,7 @@ void	Grid::drawLow(Vec2 start, Vec2 end, Vec2 &normal, float width,
 }
 
 void	Grid::drawHigh(Vec2 start, Vec2 end, Vec2 &normal, float width,
-	const std::string &charSet, char branch)
+	const std::string &charSet, char branch, bool endSwitch)
 {
 	Vec2	pos(0, 0);
 	int		dx = end.x - start.x;
@@ -179,6 +183,7 @@ void	Grid::drawHigh(Vec2 start, Vec2 end, Vec2 &normal, float width,
 	int		xi = dx < 0 ? -1 : 1;
 	int		error;
 	int		x;
+	float	charWidth;
 
 	dx = abs(dx);
 	error = (2 * dx) - dy;
@@ -190,10 +195,13 @@ void	Grid::drawHigh(Vec2 start, Vec2 end, Vec2 &normal, float width,
 	{
 		pos.x = x;
 		pos.y = y;
-		placeWideChar(pos, normal,
-			lerp(width, width * 0.5,
-				static_cast<float>(y - start.y) / static_cast<float>(end.y - start.y)),
-			charSet, branch);
+		if (endSwitch)
+			charWidth = lerp(width, width * 0.5, static_cast<float>(y - end.y)
+					/ static_cast<float>(start.y - end.y));
+		else
+			charWidth = lerp(width, width * 0.5, static_cast<float>(y - start.y)
+					/ static_cast<float>(end.y - start.y));
+		placeWideChar(pos, normal, charWidth, charSet, branch);
 		if (error > 0)
 		{
 			x += xi;
@@ -241,17 +249,17 @@ void	Grid::drawLine(Vec2 start, Vec2 end, Vec2 &normal, float width, const std::
 	if (fabs(end.y - start.y) < fabs(end.x - start.x))
 	{
 		if (start.x > end.x)
-			drawLow(end, start, normal, width, charSet, '\\');
+			drawLow(end, start, normal, width, charSet, '\\', true);
 		else
-			drawLow(start, end, normal, width, charSet, '/');
+			drawLow(start, end, normal, width, charSet, '/', false);
 	}
 	else
 	{
 		special_char = '|';
 		if (start.y > end.y)
-			drawHigh(end, start, normal, width, charSet, special_char);
+			drawHigh(end, start, normal, width, charSet, special_char, true);
 		else
-			drawHigh(start, end, normal, width, charSet, special_char);
+			drawHigh(start, end, normal, width, charSet, special_char, false);
 	}
 }
 
