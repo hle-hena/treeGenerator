@@ -6,7 +6,7 @@
 /*   By: hle-hena <hle-hena@student.42perpignan.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 13:32:07 by hle-hena          #+#    #+#             */
-/*   Updated: 2025/09/08 09:40:26 by hle-hena         ###   ########.fr       */
+/*   Updated: 2025/09/08 10:36:12 by hle-hena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	main(int ac, char **av)
 	{
 		Grid			grid(800, 500);
 		Vec2			root(400, 0);
-		Tree			tree(grid, root, 100, 17);
+		Tree			tree(grid, root, 100, 13);
 		std::ofstream	out(av[1]);
 
 		tree.draw();

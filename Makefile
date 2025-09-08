@@ -1,5 +1,5 @@
 CC = c++
-CFLAGS = -Wall -Werror -Wextra -std=c++98 -I./include -O3
+CFLAGS = -Wall -Werror -Wextra -std=c++98 -I./include
 
 SRCDIR = srcs
 OBJDIR = objs

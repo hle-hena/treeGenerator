@@ -6,7 +6,7 @@
 /*   By: hle-hena <hle-hena@student.42perpignan.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 10:50:21 by hle-hena          #+#    #+#             */
-/*   Updated: 2025/09/05 12:13:37 by hle-hena         ###   ########.fr       */
+/*   Updated: 2025/09/08 13:39:25 by hle-hena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void	Leaves::draw(void)
 		Vec2	leafPos(_branchCoo);
 
 		leafLen = randIntRange(2, 3);
+		leafPos.y += 1;
 		displacement.normalize();
 		for (int i = 0; i < leafLen; i++)
 		{

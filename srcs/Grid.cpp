@@ -6,7 +6,7 @@
 /*   By: hle-hena <hle-hena@student.42perpignan.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 12:32:24 by hle-hena          #+#    #+#             */
-/*   Updated: 2025/09/08 09:09:16 by hle-hena         ###   ########.fr       */
+/*   Updated: 2025/09/08 13:38:55 by hle-hena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,13 +81,14 @@ void	Grid::placeChar(Vec2 &pos, char toPrint, bool isBranch)
 {
 	static std::string	charSet("&%#@");
 
-	if (pos.x < 0 || pos.x >= width - 1 || pos.y < 0 || pos.y >= height - 1)
+	if (round(pos.x) < 0 || round(pos.x) >= width - 1
+		|| round(pos.y) < 0 || round(pos.y) >= height - 1)
 		return ;
 	if (isBranch)
 	{
 		if (charSet.find((_grid[static_cast<int>(round(pos.y))]
 		[static_cast<int>(round(pos.x))])) != std::string::npos
-			&& randIntRange(0, 3))
+			&& randIntRange(0, 9))
 			return ;
 	}
 	_grid[static_cast<int>(round(pos.y))]
@@ -105,7 +106,7 @@ void	Grid::placeWideChar(Vec2 &pos, Vec2 &normal, float width,
 	Vec2	start(pos);
 	Vec2	end(pos);
 
-	if (width <= 1.5)
+	if (width < 0)
 	{
 		int	rand = randIntRange(0, 20);
 		placeChar(pos,
@@ -113,8 +114,8 @@ void	Grid::placeWideChar(Vec2 &pos, Vec2 &normal, float width,
 			+ branch * (rand != 0), true);
 		return ;
 	}
-	start -= normal * (width / 2);
-	end += normal * (width / 2);
+	start -= normal * (width / 2.0);
+	end += normal * (width / 2.0);
 	start.x = round(start.x);
 	start.y = round(start.y);
 	end.x = round(end.x);
@@ -148,6 +149,9 @@ void	Grid::drawLow(Vec2 start, Vec2 end, Vec2 &normal, float width,
 	dy = abs(dy);
 	error = (2 * dy) - dx;
 	y = start.y;
+	placeWideChar(start, normal, width, charSet, branch);
+	if (fabs(end.x - start.x) < 0.5)
+		return ;
 	for (int x = start.x; x <= end.x; x++)
 	{
 		pos.x = x;
@@ -179,12 +183,15 @@ void	Grid::drawHigh(Vec2 start, Vec2 end, Vec2 &normal, float width,
 	dx = abs(dx);
 	error = (2 * dx) - dy;
 	x = start.x;
+	placeWideChar(start, normal, width, charSet, branch);
+	if (fabs(end.y - start.y) < 0.5)
+		return ;
 	for (int y = start.y; y <= end.y; y++)
 	{
 		pos.x = x;
 		pos.y = y;
 		placeWideChar(pos, normal,
-			lerp(width, width * 0.75,
+			lerp(width, width * 0.5,
 				static_cast<float>(y - start.y) / static_cast<float>(end.y - start.y)),
 			charSet, branch);
 		if (error > 0)
@@ -204,6 +211,11 @@ void	Grid::drawDisc(Vec2 center, float radius,
 	int		r2 = r * r;
 	Vec2	normal(0, 0);
 
+	if (radius <= 1)
+	{
+		placeWideChar(center, normal, -1, charSet, branch);
+		return ;
+	}
 	for (int y = -r; y <= r; y++)
 	{
 		for (int x = -r; x <= r; x++)
@@ -225,7 +237,7 @@ void	Grid::drawLine(Vec2 start, Vec2 end, Vec2 &normal, float width, const std::
 	start.y = round(start.y);
 	end.x = round(end.x);
 	end.y = round(end.y);
-	drawDisc(start, width / 2, charSet, '|');
+	drawDisc(start, width / 2.0, charSet, '|');
 	if (fabs(end.y - start.y) < fabs(end.x - start.x))
 	{
 		if (start.x > end.x)
@@ -245,8 +257,8 @@ void	Grid::drawLine(Vec2 start, Vec2 end, Vec2 &normal, float width, const std::
 
 void	Grid::out(void) const
 {
-	for (int i = 0; i < height; i++)
-		std::cout << _grid[height - i - 1] << std::endl;
+	for (int i = height - 1; i >= 0; i--)
+		std::cout << _grid[i] << std::endl;
 }
 
 void	Grid::out(std::ofstream &out) const
