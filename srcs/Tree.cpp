@@ -6,7 +6,7 @@
 /*   By: hle-hena <hle-hena@student.42perpignan.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 14:50:37 by hle-hena          #+#    #+#             */
-/*   Updated: 2025/09/05 17:54:01 by hle-hena         ###   ########.fr       */
+/*   Updated: 2025/09/08 09:40:55 by hle-hena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Tree::Tree(Grid &grid, Vec2 &root) :
 	_grid(grid),
 	_root(root),
 	_initialLen(15),
-	_numOfLayers(9),
+	_numOfLayers(10),
 	_branchChar("~;:=")
 {
 }
@@ -39,7 +39,7 @@ Tree::Tree(const Tree &other) :
 	_grid(other._grid),
 	_root(other._root),
 	_initialLen(15),
-	_numOfLayers(9),
+	_numOfLayers(10),
 	_branchChar(other._branchChar)
 {
 }
@@ -70,7 +70,7 @@ Vec2	Tree::getEndCoo(Vec2 start, float len, float theta) const
 
 void	Tree::draw(void) const
 {
-	float	initialTheta = randNormal(0, 0.2f);
+	float	initialTheta = randNormal(0, 0.1f);
 
 	drawBox("_____~", static_cast<double>(_initialLen) / 5.0);
 	drawBranch(_root, 1, _initialLen,
@@ -133,18 +133,21 @@ void	Tree::drawBranchChild(Vec2 startCoo, int layer, float len, float width,
 	float theta) const
 {
 	int		sign = (0.5 - randIntRange(0, 1)) * 2;
-	int		nbBranch = round(randNormal(2.6, 1));
-	float	step = nbBranch == 0 ? 0 : len / (float)nbBranch;
+	int		nbBranch = round(randNormal(2, 1/3));
+	float	step = nbBranch == 0 ? 0 : len / static_cast<float>(nbBranch);
 	float	newWidth = width * 0.75;
 	float	newLen = len * 0.75;
 	float	newTheta;
 
+	if (nbBranch == 0)
+		drawBranch(getEndCoo(startCoo, len, theta),
+			_numOfLayers, len, width, theta);
 	for (int i = 0; i < nbBranch; i++)
 	{
 		do
 			newTheta = theta +
 				static_cast<float>(sign) * randNormal(0.498132, randFloatRange(0.15, 0.2));
-		while (fabs(newTheta) > 2 || fabs(newTheta) < 0.3);
+		while (fabs(newTheta) > 1.5 || fabs(newTheta) < 0.3);
 		drawBranch(getEndCoo(startCoo, (i + 1) * step, theta),
 			layer + 1, newLen, newWidth, newTheta);
 		sign *= -1;

@@ -6,7 +6,7 @@
 /*   By: hle-hena <hle-hena@student.42perpignan.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 12:32:24 by hle-hena          #+#    #+#             */
-/*   Updated: 2025/09/05 17:47:10 by hle-hena         ###   ########.fr       */
+/*   Updated: 2025/09/08 09:09:16 by hle-hena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	Grid::placeWideChar(Vec2 &pos, Vec2 &normal, float width,
 
 	if (width <= 1.5)
 	{
-		int	rand = randIntRange(0, 10);
+		int	rand = randIntRange(0, 20);
 		placeChar(pos,
 			charSet[randIntRange(0, charSet.size() - 1)] * (rand == 0)
 			+ branch * (rand != 0), true);
@@ -225,7 +225,7 @@ void	Grid::drawLine(Vec2 start, Vec2 end, Vec2 &normal, float width, const std::
 	start.y = round(start.y);
 	end.x = round(end.x);
 	end.y = round(end.y);
-	drawDisc(start, width / 2, charSet, '*');
+	drawDisc(start, width / 2, charSet, '|');
 	if (fabs(end.y - start.y) < fabs(end.x - start.x))
 	{
 		if (start.x > end.x)
